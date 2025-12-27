@@ -6,7 +6,8 @@ int main()
     int n = 2000;
     // hello
     return 0;
-    //ciao sono il dalla ;)
     int a = 88;
     int dalla = 67;
+    double n = 7;
+    // ciao sono il dalla ;)
 }
