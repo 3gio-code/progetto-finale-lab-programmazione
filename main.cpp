@@ -8,6 +8,5 @@ int main()
     return 0;
     int a = 88;
     int dalla = 67;
-    double n = 7;
     // ciao sono il dalla ;)
 }
