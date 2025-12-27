@@ -7,4 +7,5 @@ int main()
     // hello
     return 0;
     //ciao sono il dalla ;)
+    int a = 88;
 }
