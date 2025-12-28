@@ -1,0 +1,8 @@
+*file contenente la struttura dell'autostrada
+*svincoli
+20  S
+0   S
+10  S
+*varchi
+15  V
+1   V
