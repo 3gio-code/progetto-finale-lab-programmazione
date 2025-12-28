@@ -1,21 +1,17 @@
 #ifndef SIMULATORE_H
 #define SIMULATORE_H
 
-#include <ctime>
 #include <string>
 #include <vector>
+#include <chrono>
+#include <utility> // per std::pair
 
-// paramentri range velocita
+// Parametri costanti
 constexpr int vel_min = 80;
 constexpr int vel_max = 190;
-
-// paramentri tempo di cambio velocita
-constexpr double tempo_min = 300;
+constexpr double tempo_min = 300; // in secondi
 constexpr int tempo_max = 900;
-
-// numero macchine
 constexpr int num_macchine = 10000;
-
 constexpr double rit_gen_min = 0.5;
 constexpr double rit_gen_max = 10;
 
@@ -24,27 +20,30 @@ struct Car
     std::string targa;
     int svincolo_ingresso;
     int svincolo_uscita;
-    std::time_t data_ora_ingresso;
-    std::map<int, int> velocita;
+    std::chrono::time_point<std::chrono::system_clock> data_ora_ingresso;
+    // Cambiato map in vector<pair> per preservare l'ordine e permettere velocità duplicate nel tempo
+    std::vector<std::pair<int, int>> velocita;
 };
 
 class Simulatore
 {
 public:
-    Simulatore() : time{0} {};
+    Simulatore() : time{0}, adesso{std::chrono::system_clock::now()}, file_path("../data/Highway.txt") {};
+
+    void scrivi();
     void leggi_memorizza_autostrada(const std::string &file_path);
-
+    void genera_percorsi();
     std::string genera_targa() const;
-
-    void genera_percorsi() const;
-    void genera_passaggio() const;
+    bool is_number(const std::string &s) const;
 
 private:
     std::string file_path;
     double time;
+    // Corretto: auto non è permesso qui, serve il tipo esplicito
+    std::chrono::time_point<std::chrono::system_clock> adesso;
     std::vector<Car> macchine;
-    std::vector<int> varchi;
-    std::vector<int> svincoli;
+    std::vector<double> varchi;
+    std::vector<double> svincoli;
 };
 
 #endif
