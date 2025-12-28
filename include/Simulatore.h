@@ -32,6 +32,7 @@ class Simulatore
 {
 public:
     Simulatore() : time{0} {};
+    void leggi_memorizza_autostrada(const std::string &file_path);
 
     std::string genera_targa() const;
 
@@ -39,8 +40,11 @@ public:
     void genera_passaggio() const;
 
 private:
+    std::string file_path;
     double time;
     std::vector<Car> macchine;
+    std::map<int, int> varchi;
+    std::map<int, int> svincoli;
 };
 
 #endif
