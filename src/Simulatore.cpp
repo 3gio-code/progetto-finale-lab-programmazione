@@ -34,13 +34,19 @@ void leggi_memorizza_autostrada(const std::string &file_path)
     // Definisci qui i simboli specifici che vuoi togliere (oltre agli spazi)
     std::string simboliValidi = "0123456789SV<>";
     bool allow_insertion = false;
+    std::string rigaPulita = "";
     while (getline(Highway, line))
     {
-        std::string rigaPulita = ""; // Qui costruiremo la nuova riga
+        rigaPulita = ""; // Qui costruiremo la nuova riga
 
         // 2. IL FOR PER I CARATTERI
         for (char c : riga)
         {
+            // righe con commenti
+            if (c == '*')
+            {
+                break;
+            }
 
             // A. Controllo Spazi: Se è uno spazio, saltalo (continue)
             if (c == ' ')
@@ -52,18 +58,62 @@ void leggi_memorizza_autostrada(const std::string &file_path)
             // string::npos significa "non trovato", quindi se != npos, l'ha trovato
             if (simboliValidi.find(c) != std::string::npos)
             {
+                switch (c)
+                {
+                case '<':
+                    allow_insertion = true;
+                    break;
+                case '>':
+                    allow_insertion = false;
+                    break;
+                case 'S':
+                {
+                    try
+                    {
+                        int numero = static_cast<int>(rigaPulita);
+                    }
+                    catch (std::runtime_error e)
+                    {
+                        throw e;
+                    }
+                    svincoli.push_back(numero);
+                }
+                break;
+                case 'V':
+                {
+                    try
+                    {
+                        int numero = static_cast<int>(rigaPulita);
+                    }
+                    catch (std::runtime_error e)
+                    {
+                        throw e;
+                    }
+                    varchi.push_back(numero);
+                }
+                break;
+                default:
+                {
+                    if (allow_insertion == false)
+                    {
+                        throw std::runtime_error("Formattazione file di ingresso sbagliata");
+                    }
+                    rigaPulita += c;
+                }
+                break;
+                }
 
-                continue; // È un simbolo vietato, saltalo
+                continue;
             }
 
             // Se siamo arrivati qui, il carattere è valido: aggiungilo
-            rigaPulita += c;
+            throw std::runtime_error("Formattazione file di ingresso sbagliata");
         }
 
         // Stampa o usa la riga pulita
-        if (!rigaPulita.empty())
+        if (allow_insertion == true)
         {
-            std::cout << "Riga processata: " << rigaPulita << std::endl;
+            throw std::runtime_error("Formattazione file di ingresso sbagliata");
         }
     }
 

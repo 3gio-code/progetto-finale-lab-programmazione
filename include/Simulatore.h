@@ -43,8 +43,8 @@ private:
     std::string file_path;
     double time;
     std::vector<Car> macchine;
-    std::map<int, int> varchi;
-    std::map<int, int> svincoli;
+    std::vector<int> varchi;
+    std::vector<int> svincoli;
 };
 
 #endif
