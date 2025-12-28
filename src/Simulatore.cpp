@@ -1,48 +1,54 @@
-#include "../include/Simulatore.h" // Assicurati che il percorso sia corretto rispetto al tuo progetto
+#include "../include/Simulatore.h"
 #include <iostream>
 #include <fstream>
 #include <random>
 #include <stdexcept>
 #include <algorithm>
 #include <iomanip>
-#include <cmath> // per std::round
+#include <ctime>
+#include <cmath>
 
-// Variabili globali per il random (ok per questo livello, meglio se statiche o membri)
+// Variabili globali per il random
 std::random_device rd;
 std::mt19937 mt(rd());
 std::uniform_int_distribution<> vel_dist(vel_min, vel_max);
 std::uniform_int_distribution<> char_dist(1, 26);
-std::uniform_int_distribution<> num_dist(0, 9); // Corretto da 1-9 a 0-9
+std::uniform_int_distribution<> num_dist(0, 9);
 std::uniform_int_distribution<> tempo_dist(tempo_min, tempo_max);
 std::uniform_real_distribution<> ritardo_dist(rit_gen_min, rit_gen_max);
 
-// Aggiunto scope Simulatore::
+// --- OPERATOR OVERLOAD (Spostato PRIMA di scrivi per visibilità) ---
+template <typename T, typename Y>
+std::ostream &operator<<(std::ostream &stream, std::pair<T, Y> const &p)
+{
+    // Formato output: <Velocità Tempo>
+    stream << "<" << p.first << " " << p.second << "> ";
+    return stream;
+}
+
+// --- METODI SIMULATORE ---
+
 void Simulatore::genera_percorsi()
 {
     int k{0};
 
     while (k < num_macchine)
     {
-        // Genera dati iniziali
         std::string targa_temp = genera_targa();
         double secondi_relativi_ingresso = ritardo_dist(mt);
-        time += secondi_relativi_ingresso; // Aggiorna il tempo globale della simulazione
+        time += secondi_relativi_ingresso;
 
-        // cast necessario per aggiungere double (secondi) a time_point
         auto futuro = adesso + std::chrono::milliseconds(static_cast<long long>(time * 1000));
 
-        // Logica svincoli
         if (svincoli.empty())
             throw std::runtime_error("Nessuno svincolo caricato!");
 
-        std::uniform_int_distribution<> svincolo_ingresso_dist(0, svincoli.size() - 2); // -2 perché deve esserci almeno 1 uscita dopo
+        std::uniform_int_distribution<> svincolo_ingresso_dist(0, svincoli.size() - 2);
         int svincolo_ingresso_idx = svincolo_ingresso_dist(mt);
 
         std::uniform_int_distribution<> svincolo_uscita_dist(svincolo_ingresso_idx + 1, svincoli.size() - 1);
         int svincolo_uscita_idx = svincolo_uscita_dist(mt);
 
-        // Calcolo distanza target
-        // Assumo che svincoli contenga i KM progressivi (es. 0, 10.5, 20.0)
         double km_ingresso = svincoli[svincolo_ingresso_idx];
         double km_uscita = svincoli[svincolo_uscita_idx];
         double distanza_totale = km_uscita - km_ingresso;
@@ -60,12 +66,10 @@ void Simulatore::genera_percorsi()
 
             if (tot_km + distanza_step >= distanza_totale)
             {
-                // Calcola quanto manca esattamente
                 double distanza_rimanente = distanza_totale - tot_km;
                 double tempo_ore_necessario = distanza_rimanente / velocita;
                 int tempo_sec_necessario = static_cast<int>(tempo_ore_necessario * 3600);
 
-                // Evita tempi negativi o zero se siamo al limite
                 if (tempo_sec_necessario > 0)
                     velocita_temp.push_back({velocita, tempo_sec_necessario});
 
@@ -79,7 +83,6 @@ void Simulatore::genera_percorsi()
             }
         }
 
-        // Inizializzazione corretta della Struct
         Car temp;
         temp.targa = targa_temp;
         temp.svincolo_ingresso = svincolo_ingresso_idx;
@@ -95,17 +98,35 @@ void Simulatore::genera_percorsi()
 
 void Simulatore::scrivi()
 {
-    // Nota: Aprire e chiudere il file ogni volta sovrascrive tutto se non usi std::ios::app
-    // Qui ho lasciato std::ofstream default che tronca il file, come nel tuo codice originale.
-    std::ofstream Runs("../data/Runs.txt");
+    // Usa std::ios::trunc per sovrascrivere il file pulito a ogni avvio
+    std::ofstream Runs("../data/Runs.txt", std::ios::trunc);
 
-    // Corretto il loop for con const auto&
+    if (!Runs.is_open())
+    {
+        std::cerr << "Errore: Impossibile scrivere su ../data/Runs.txt" << std::endl;
+        return;
+    }
+
     for (const auto &c : macchine)
     {
-        Runs << "<" << c.targa << ">" << std::endl;
-        // Puoi aggiungere qui la stampa delle velocità se vuoi
+        // 1. Converti il time_point in time_t (secondi standard)
+        std::time_t time_val = std::chrono::system_clock::to_time_t(c.data_ora_ingresso);
+
+        // 2. Converti in struttura data locale
+        std::tm *time_ptr = std::localtime(&time_val);
+
+        Runs << "<" << c.targa << "> "
+             << "<" << c.svincolo_ingresso << "> "
+             << "<" << c.svincolo_uscita << "> "
+             << "<" << std::put_time(time_ptr, "%d-%m-%Y %H:%M:%S") << "> "; // Formato Giorno-Mese-Anno Ora:Min:Sec
+
+        for (const auto &s : c.velocita)
+        {
+            Runs << s; // Usa l'operator<< che abbiamo definito
+        }
+        Runs << "\n";
     }
-    Runs.close(); // Aggiunto punto e virgola
+    Runs.close();
 }
 
 void Simulatore::leggi_memorizza_autostrada(const std::string &file_path)
@@ -119,18 +140,17 @@ void Simulatore::leggi_memorizza_autostrada(const std::string &file_path)
     std::string riga;
     std::string simboliValidi = "0123456789.SV<>";
 
-    // Corretto 'line' in 'riga'
     while (getline(Highway, riga))
     {
         std::string rigaPulita = "";
-        bool allow_insertion = false; // Corretto assegnazione
+        bool allow_insertion = false;
 
         for (char c : riga)
         {
             if (c == '*')
-                break; // Commento
+                break;
             if (c == ' ')
-                continue; // Spazio
+                continue;
 
             if (simboliValidi.find(c) != std::string::npos)
             {
@@ -142,14 +162,13 @@ void Simulatore::leggi_memorizza_autostrada(const std::string &file_path)
                 case '>':
                     allow_insertion = false;
                     break;
-                // RIMOSSO IL CASE '.' : il punto deve essere parte del numero in default
                 case 'S':
                 {
                     if (!is_number(rigaPulita))
                         throw std::runtime_error("Formattazione non numerica per Svincolo");
                     double numero = std::stod(rigaPulita);
                     svincoli.push_back(numero);
-                    rigaPulita = ""; // Reset buffer
+                    rigaPulita = "";
                 }
                 break;
                 case 'V':
@@ -158,21 +177,16 @@ void Simulatore::leggi_memorizza_autostrada(const std::string &file_path)
                         throw std::runtime_error("Formattazione non numerica per Varco");
                     double numero = std::stod(rigaPulita);
                     varchi.push_back(numero);
-                    rigaPulita = ""; // Reset buffer
+                    rigaPulita = "";
                 }
                 break;
                 default:
-                    // Qui accumuliamo cifre E IL PUNTO decimale
                     if (allow_insertion)
                     {
                         rigaPulita += c;
                     }
                     break;
                 }
-            }
-            else
-            {
-                // Carattere non valido trovato
             }
         }
     }
@@ -186,13 +200,16 @@ void Simulatore::leggi_memorizza_autostrada(const std::string &file_path)
     {
         throw std::runtime_error("Numero minimo di varchi non rispettato");
     }
+
+    // --- CORREZIONI LOGICHE CRITICHE ---
     if (varchi[0] - 1 < svincoli[0])
     {
-        throw std::runtime_error("struttura autostrada non rispettata");
+        throw std::runtime_error("struttura autostrada non rispettata (V < S+1)");
     }
+    // Correzione: uso .back() come valore, non come indice
     if (varchi.back() + 1 > svincoli.back())
     {
-        throw std::runtime_error("struttura autostrada non rispettata");
+        throw std::runtime_error("struttura autostrada non rispettata (V > S-1)");
     }
 
     for (auto v : varchi)
@@ -209,7 +226,6 @@ void Simulatore::leggi_memorizza_autostrada(const std::string &file_path)
 
 bool Simulatore::is_number(const std::string &s) const
 {
-    // Permette cifre e un singolo punto decimale
     bool punto_trovato = false;
     if (s.empty())
         return false;
@@ -220,7 +236,7 @@ bool Simulatore::is_number(const std::string &s) const
         if (c == '.')
         {
             if (punto_trovato)
-                return false; // due punti non validi
+                return false;
             punto_trovato = true;
             continue;
         }

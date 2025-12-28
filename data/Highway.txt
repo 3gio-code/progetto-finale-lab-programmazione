@@ -1,22 +1,155 @@
-* Configurazione Autostrada di Test (100km totali)
-* Sintassi: <KM_Progressivo> <Tipo>
-* Tipi: S = Svincolo, V = Varco (Tutor/Telecamera)
+* Autostrada 20.000 km
+* Sintassi corretta: <Km Tipo>
+* 100 Svincoli, 50 Varchi
+* Generazione sequenziale: Svincoli ogni 200km (tranne l'ultimo step), Varchi ogni 400km sfalsati
 
-* --- LISTA SVINCOLI (Uscite) ---
-* Nota: Inseriti in ordine sparso per testare il sort
-<0.0>   <S>   * Inizio Autostrada
-<100.0> <S>   * Fine Autostrada
-<25.5>  <S>   * Uscita Padova
-<50.0>  <S>   * Uscita Ferrara
-<75.2>  <S>   * Uscita Bologna
-
-* --- LISTA VARCHI (Controllo Velocità) ---
-* Regola 1: Primo varco > Primo Svincolo + 1
-* Regola 2: Ultimo varco < Ultimo Svincolo - 1
-* Regola 3: Nessun varco sovrapposto a Svincolo (+- 1km)
-
-<5.0>   <V>   * Primo controllo (OK: 5 > 0+1)
-<15.2>  <V>   * Controllo intermedio
-<35.0>  <V>   * Tra Padova e Ferrara
-<60.0>  <V>   * Tra Ferrara e Bologna
-<90.5>  <V>   * Ultimo controllo (OK: 90.5 < 100-1)
+<0.0 S>
+<100.0 V>
+<200.0 S>
+<400.0 S>
+<500.0 V>
+<600.0 S>
+<800.0 S>
+<900.0 V>
+<1000.0 S>
+<1200.0 S>
+<1300.0 V>
+<1400.0 S>
+<1600.0 S>
+<1700.0 V>
+<1800.0 S>
+<2000.0 S>
+<2100.0 V>
+<2200.0 S>
+<2400.0 S>
+<2500.0 V>
+<2600.0 S>
+<2800.0 S>
+<2900.0 V>
+<3000.0 S>
+<3200.0 S>
+<3300.0 V>
+<3400.0 S>
+<3600.0 S>
+<3700.0 V>
+<3800.0 S>
+<4000.0 S>
+<4100.0 V>
+<4200.0 S>
+<4400.0 S>
+<4500.0 V>
+<4600.0 S>
+<4800.0 S>
+<4900.0 V>
+<5000.0 S>
+<5200.0 S>
+<5300.0 V>
+<5400.0 S>
+<5600.0 S>
+<5700.0 V>
+<5800.0 S>
+<6000.0 S>
+<6100.0 V>
+<6200.0 S>
+<6400.0 S>
+<6500.0 V>
+<6600.0 S>
+<6800.0 S>
+<6900.0 V>
+<7000.0 S>
+<7200.0 S>
+<7300.0 V>
+<7400.0 S>
+<7600.0 S>
+<7700.0 V>
+<7800.0 S>
+<8000.0 S>
+<8100.0 V>
+<8200.0 S>
+<8400.0 S>
+<8500.0 V>
+<8600.0 S>
+<8800.0 S>
+<8900.0 V>
+<9000.0 S>
+<9200.0 S>
+<9300.0 V>
+<9400.0 S>
+<9600.0 S>
+<9700.0 V>
+<9800.0 S>
+<10000.0 S>
+<10100.0 V>
+<10200.0 S>
+<10400.0 S>
+<10500.0 V>
+<10600.0 S>
+<10800.0 S>
+<10900.0 V>
+<11000.0 S>
+<11200.0 S>
+<11300.0 V>
+<11400.0 S>
+<11600.0 S>
+<11700.0 V>
+<11800.0 S>
+<12000.0 S>
+<12100.0 V>
+<12200.0 S>
+<12400.0 S>
+<12500.0 V>
+<12600.0 S>
+<12800.0 S>
+<12900.0 V>
+<13000.0 S>
+<13200.0 S>
+<13300.0 V>
+<13400.0 S>
+<13600.0 S>
+<13700.0 V>
+<13800.0 S>
+<14000.0 S>
+<14100.0 V>
+<14200.0 S>
+<14400.0 S>
+<14500.0 V>
+<14600.0 S>
+<14800.0 S>
+<14900.0 V>
+<15000.0 S>
+<15200.0 S>
+<15300.0 V>
+<15400.0 S>
+<15600.0 S>
+<15700.0 V>
+<15800.0 S>
+<16000.0 S>
+<16100.0 V>
+<16200.0 S>
+<16400.0 S>
+<16500.0 V>
+<16600.0 S>
+<16800.0 S>
+<16900.0 V>
+<17000.0 S>
+<17200.0 S>
+<17300.0 V>
+<17400.0 S>
+<17600.0 S>
+<17700.0 V>
+<17800.0 S>
+<18000.0 S>
+<18100.0 V>
+<18200.0 S>
+<18400.0 S>
+<18500.0 V>
+<18600.0 S>
+<18800.0 S>
+<18900.0 V>
+<19000.0 S>
+<19200.0 S>
+<19300.0 V>
+<19400.0 S>
+<19600.0 S>
+<19700.0 V>
+<20000.0 S>
