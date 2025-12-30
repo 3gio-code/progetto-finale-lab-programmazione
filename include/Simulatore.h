@@ -31,10 +31,12 @@ public:
     Simulatore() : time{0}, adesso{std::chrono::system_clock::now()}, file_path("../data/Highway.txt") {};
 
     void scrivi();
-    void leggi_memorizza_autostrada(const std::string &file_path);
+
     void genera_percorsi();
+    void genera_passaggi() const;
     std::string genera_targa() const;
     bool is_number(const std::string &s) const;
+    void leggi_memorizza_autostrada(const std::string &file_path);
 
 private:
     std::string file_path;

@@ -1,4 +1,4 @@
-#include "../include/Simulatore.h"
+#include "Simulatore.h"
 #include <iostream>
 #include <fstream>
 #include <random>
@@ -99,11 +99,11 @@ void Simulatore::genera_percorsi()
 void Simulatore::scrivi()
 {
     // Usa std::ios::trunc per sovrascrivere il file pulito a ogni avvio
-    std::ofstream Runs("../data/Runs.txt", std::ios::trunc);
+    std::ofstream Runs("data/Runs.txt", std::ios::trunc);
 
     if (!Runs.is_open())
     {
-        std::cerr << "Errore: Impossibile scrivere su ../data/Runs.txt" << std::endl;
+        std::cerr << "Errore: Impossibile scrivere su data/Runs.txt" << std::endl;
         return;
     }
 
@@ -212,7 +212,7 @@ void Simulatore::leggi_memorizza_autostrada(const std::string &file_path)
         throw std::runtime_error("struttura autostrada non rispettata (V > S-1)");
     }
 
-    for (auto v : varchi)
+    for (const auto &v : varchi)
     {
         for (auto s : svincoli)
         {
@@ -259,4 +259,83 @@ std::string Simulatore::genera_targa() const
     targa += static_cast<char>(char_dist(mt) + 'A' - 1);
 
     return targa;
+}
+// corretto da gemini da sistemare variabili
+void Simulatore::genera_passaggi() const
+{
+    // 1. Percorso corretto per l'esecuzione da root
+    std::ofstream Passages("data/Passages.txt", std::ios::trunc);
+    if (!Passages.is_open())
+    {
+        std::cerr << "Errore: Impossibile scrivere su data/Passages.txt" << std::endl;
+        return;
+    }
+
+    for (const auto &c : macchine)
+    {
+        int i{0};
+
+        // CORREZIONE 1: Confronto km con km (svincoli[...] invece di indice nudo)
+        // e controllo bounds (i < varchi.size())
+        while (i < varchi.size() && varchi[i] <= svincoli[c.svincolo_ingresso])
+        {
+            ++i;
+        }
+
+        int j{i};
+        // CORREZIONE 2: Logica identica per l'uscita
+        while (j < varchi.size() && varchi[j] < svincoli[c.svincolo_uscita])
+        {
+            ++j;
+        }
+
+        // Questo ciclo itera su tutti i varchi che la macchina attraversa
+        while (i < j)
+        {
+            double varco = varchi[i];
+            double km_tot{0}; // km percorsi dall'ingresso
+
+            for (int t{0}; t < c.velocita.size(); ++t)
+            { // Rimosso -1 per sicurezza, controlliamo tutti i segmenti
+
+                double velocita_step = static_cast<double>(c.velocita[t].first);
+                double tempo_step = static_cast<double>(c.velocita[t].second);
+
+                // Calcolo km percorsi in questo step
+                double km_percorsi_step = (velocita_step * tempo_step) / 3600.0;
+
+                // CORREZIONE 3: Logica di controllo
+                // Se la posizione attuale + questo step è ANCORA PRIMA del varco,
+                // accumuliamo e passiamo al prossimo step.
+                if ((km_tot + svincoli[c.svincolo_ingresso] + km_percorsi_step) < varco)
+                {
+                    km_tot += km_percorsi_step;
+                    continue;
+                }
+
+                // Se arriviamo qui, il varco è IN QUESTO step.
+                // Calcoliamo il tempo accumulato negli step precedenti
+                double momento_passaggio{0};
+                for (int k{0}; k < t; ++k)
+                {
+                    momento_passaggio += c.velocita[k].second;
+                }
+
+                // Aggiungiamo il tempo parziale dentro questo step per arrivare al varco
+                // Formula: Tempo = DistanzaMancante / Velocità
+                double distanza_mancante = varco - (svincoli[c.svincolo_ingresso] + km_tot);
+                momento_passaggio += (distanza_mancante / velocita_step) * 3600.0;
+
+                Passages << "<#" << varco << "> <" << c.targa << "> <" << momento_passaggio << ">\n";
+
+                // IMPORTANTE: Abbiamo trovato il passaggio per il varco 'i', usciamo dal ciclo 't'
+                // e passiamo al prossimo varco.
+                break;
+            }
+
+            // CORREZIONE 4: Incremento fondamentale per evitare loop infinito
+            ++i;
+        }
+    }
+    Passages.close();
 }
