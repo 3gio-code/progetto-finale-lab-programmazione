@@ -58,7 +58,7 @@ public:
     // --- INTERFACCIA UTENTE (Comandi richiesti) ---
 
     /**
-     * Esegue il comando "set_time".
+     * Esegue il comando "set_time"
      * * Legge i passaggi dal file fino al nuovo istante temporale.
      * Gestisce input in secondi ("20") o minuti ("20m").
      * input_tempo Stringa contenente il tempo (es. "120" o "10m").
