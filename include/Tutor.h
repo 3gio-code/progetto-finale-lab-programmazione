@@ -63,7 +63,7 @@ public:
      * Gestisce input in secondi ("20") o minuti ("20m").
      * input_tempo Stringa contenente il tempo (es. "120" o "10m").
      */
-    void set_set(const std::string& input_tempo);
+    void set_time(const std::string& input_tempo);
 
     /**
      * Esegue il comando "stats".
