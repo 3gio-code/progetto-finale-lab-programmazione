@@ -63,7 +63,7 @@ public:
      * Gestisce input in secondi ("20") o minuti ("20m").
      * * @param input_tempo Stringa contenente il tempo (es. "120" o "10m").
      */
-    void avanza_tempo(const std::string& input_tempo);
+    void set_set(const std::string& input_tempo);
 
     /**
      * @brief Esegue il comando "stats".
@@ -72,7 +72,7 @@ public:
      * - Velocità media
      * - Multe emesse
      */
-    void stampa_statistiche();
+    void stats();
 
     /**
      * @brief Esegue il comando "reset".
