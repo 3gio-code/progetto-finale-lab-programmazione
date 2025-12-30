@@ -12,8 +12,8 @@
 // ============================================================================
 
 /**
- * @brief Rappresenta lo stato di un veicolo "in viaggio".
- * * Quando un veicolo passa sotto un varco, memorizziamo qui i dati.
+ * Rappresenta lo stato di un veicolo "in viaggio".
+ * Quando un veicolo passa sotto un varco, memorizziamo qui i dati.
  * Ci serve per confrontarli con il passaggio al varco successivo.
  * Utilizzato come valore nella mappa 'flotta_in_transito'.
  */
@@ -23,8 +23,8 @@ struct CheckpointVeicolo {
 };
 
 /**
- * @brief Contenitore per le statistiche di un singolo varco.
- * * Serve per rispondere al comando 'stats' richiesto dal progetto.
+ * Contenitore per le statistiche di un singolo varco.
+ * Serve per rispondere al comando 'stats' richiesto dal progetto.
  */
 struct StatisticheVarco {
     int veicoli_transitati = 0;   // Contatore totale passaggi
@@ -41,33 +41,33 @@ struct StatisticheVarco {
 class Tutor {
 public:
     /**
-     * @brief Costruttore del sistema Tutor.
-     * * Inizializza il sistema, carica la mappa dell'autostrada e apre il file dei passaggi.
-     * * @param file_autostrada Percorso al file 'Highway.txt' (es. "../Data/Highway.txt")
-     * @param file_passaggi Percorso al file 'Passages.txt' (es. "../Data/Passages.txt")
-     * @throws std::runtime_error Se non riesce ad aprire i file.
+     * Costruttore del sistema Tutor.
+     * Inizializza il sistema, carica la mappa dell'autostrada e apre il file dei passaggi.
+     * file_autostrada Percorso al file 'Highway.txt' (es. "../Data/Highway.txt")
+     * file_passaggi Percorso al file 'Passages.txt' (es. "../Data/Passages.txt")
+     * lancia std::runtime_error Se non riesce ad aprire i file.
      */
     Tutor(const std::string& file_autostrada, const std::string& file_passaggi);
 
     /**
-     * @brief Distruttore.
-     * * Chiude correttamanete il file stream di lettura passaggi se aperto.
+     * Distruttore.
+     * Chiude correttamanete il file stream di lettura passaggi se aperto.
      */
     ~Tutor();
 
     // --- INTERFACCIA UTENTE (Comandi richiesti) ---
 
     /**
-     * @brief Esegue il comando "set_time".
+     * Esegue il comando "set_time".
      * * Legge i passaggi dal file fino al nuovo istante temporale.
      * Gestisce input in secondi ("20") o minuti ("20m").
-     * * @param input_tempo Stringa contenente il tempo (es. "120" o "10m").
+     * input_tempo Stringa contenente il tempo (es. "120" o "10m").
      */
     void set_set(const std::string& input_tempo);
 
     /**
-     * @brief Esegue il comando "stats".
-     * * Stampa a video le statistiche per ogni varco:
+     * Esegue il comando "stats".
+     * Stampa a video le statistiche per ogni varco:
      * - Numero veicoli
      * - Velocità media
      * - Multe emesse
@@ -75,8 +75,8 @@ public:
     void stats();
 
     /**
-     * @brief Esegue il comando "reset".
-     * * - Riporta il tempo a 0.
+     * Esegue il comando "reset".
+     * - Riporta il tempo a 0.
      * - Cancella la memoria dei veicoli in transito.
      * - Riavvolge il file 'Passages.txt' all'inizio.
      * - Azzera le statistiche.
@@ -114,35 +114,32 @@ private:
     // ========================================================================
 
     /**
-     * @brief Carica la struttura statica da Highway.txt.
-     * * Legge il file riga per riga. Ignora gli svincoli (non servono al Tutor).
+     * Carica la struttura statica da Highway.txt.
+     * *Legge il file riga per riga. Ignora gli svincoli (non servono al Tutor).
      * Assegna ID progressivi (1, 2, 3...) ai varchi in ordine di apparizione
      * e memorizza le loro distanze chilometriche.
      */
     void carica_autostrada(const std::string& file_path);
 
     /**
-     * @brief Helper per convertire l'input utente in secondi.
-     * * @param input Stringa come "100" o "5m".
-     * @return double Valore convertito in secondi (es. "5m" -> 300.0).
+     * Helper per convertire l'input utente in secondi.
+     * input Stringa come "100" o "5m".
+     * double Valore convertito in secondi (es. "5m" -> 300.0).
      */
     double parse_input_tempo(const std::string& input) const;
 
     /**
-     * @brief Core Business Logic: elabora un singolo transito.
-     * * Viene chiamata per ogni riga letta da Passages.txt.
+     * Core Business Logic: elabora un singolo transito.
+     * Viene chiamata per ogni riga letta da Passages.txt.
      * 1. Controlla se la targa è già in 'flotta'.
      * 2. Se sì: calcola velocità media (Delta S / Delta T).
      * 3. Se > 130 km/h: stampa multa.
      * 4. Aggiorna la posizione del veicolo o lo inserisce se nuovo.
-     * * @param targa Targa del veicolo.
-     * @param id_varco ID del varco appena attraversato.
-     * @param istante Tempo del passaggio in secondi.
      */
     void elabora_passaggio(const std::string& targa, int id_varco, double istante);
 
     /**
-     * @brief Pulisce le stringhe lette dal file (rimuove < e >).
+     * Pulisce le stringhe lette dal file (rimuove < e >).
      */
     std::string pulisci_token(const std::string& token);
 };
