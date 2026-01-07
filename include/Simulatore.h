@@ -15,23 +15,27 @@ constexpr int tempo_max = 900;
 constexpr int num_macchine = 10000;
 constexpr double rit_gen_min = 0.5;
 constexpr double rit_gen_max = 10;
+
 struct Car
 {
     std::string targa;
     int svincolo_ingresso;
     int svincolo_uscita;
     std::chrono::time_point<std::chrono::system_clock> data_ora_ingresso;
-    // Cambiato map in vector<pair> per preservare l'ordine e permettere velocità duplicate nel tempo
     std::vector<std::pair<int, int>> velocita;
 };
 
 class Simulatore
 {
 public:
-    Simulatore() : mt(std::random_device{}()),
+    // Costruttore: Inizializza i path e rispetta l'ordine delle variabili private
+    Simulatore() : path_highway("data/Highway.txt"),
+                   path_runs("data/Runs.txt"),
+                   path_passages("data/Passages.txt"),
                    time{0},
                    adesso{std::chrono::system_clock::now()},
-                   file_path("../data/Highway.txt"),
+                   // macchine, varchi, svincoli inizializzati implicitamente (vector vuoti)
+                   mt(std::random_device{}()),
                    vel_dist(vel_min, vel_max),
                    char_dist(1, 26),
                    num_dist(0, 9),
@@ -39,19 +43,24 @@ public:
                    ritardo_dist(rit_gen_min, rit_gen_max) {
                    };
 
+    // Metodi senza parametri (usano le variabili private)
     void scrivi();
-
     void genera_percorsi();
-    void genera_passaggi() const;
+    void genera_passaggi() const; // const mantenuto perché non modifica lo stato della classe (solo output su file)
+
     std::string genera_targa();
     bool is_number(const std::string &s) const;
-    void leggi_memorizza_autostrada(const std::string &file_path);
+    void leggi_memorizza_autostrada();
 
 private:
-    std::string file_path;
+    // Variabili per i percorsi dei 3 file (dichiarate per prime)
+    std::string path_highway;
+    std::string path_runs;
+    std::string path_passages;
+
     double time;
-    // Corretto: auto non è permesso qui, serve il tipo esplicito
     std::chrono::time_point<std::chrono::system_clock> adesso;
+
     std::vector<Car> macchine;
     std::vector<double> varchi;
     std::vector<double> svincoli;
