@@ -328,7 +328,7 @@ void Simulatore::genera_passaggi() const
                 double distanza_mancante = varco - (svincoli[c.svincolo_ingresso] + km_tot);
                 momento_passaggio += (distanza_mancante / velocita_step) * 3600.0;
 
-                Passages << "<#" << varco << "> <" << c.targa << "> <" << momento_passaggio << ">\n";
+                Passages << "<#" << i << "> <" << c.targa << "> <" << momento_passaggio << ">\n";
 
                 // IMPORTANTE: Abbiamo trovato il passaggio per il varco 'i', usciamo dal ciclo 't'
                 // e passiamo al prossimo varco.
