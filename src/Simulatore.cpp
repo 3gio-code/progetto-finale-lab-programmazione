@@ -33,7 +33,8 @@ void Simulatore::genera_percorsi()
         auto futuro = adesso + std::chrono::milliseconds(static_cast<long long>(time * 1000));
 
         if (svincoli.empty())
-            throw std::runtime_error("Nessuno svincolo caricato!");
+            // MODIFICATO: Lo stato interno non è valido per questa operazione (Logic Error)
+            throw std::logic_error("Nessuno svincolo caricato!");
 
         std::uniform_int_distribution<> svincolo_ingresso_dist(0, svincoli.size() - 2);
         int svincolo_ingresso_idx = svincolo_ingresso_dist(mt);
@@ -93,7 +94,7 @@ void Simulatore::scrivi()
     std::ofstream Runs("data/Runs.txt", std::ios::trunc);
     if (!Runs.is_open())
     {
-        // Lancia eccezione invece di stampare e basta
+        // Errore di I/O: Corretto mantenere runtime_error
         throw std::runtime_error("Errore di I/O: Impossibile scrivere su data/Runs.txt");
     }
 
@@ -124,6 +125,7 @@ void Simulatore::leggi_memorizza_autostrada(const std::string &file_path)
     std::ifstream Highway(file_path);
     if (!Highway.is_open())
     {
+        // Errore di I/O: Corretto mantenere runtime_error
         throw std::runtime_error("Impossibile aprire file: " + file_path);
     }
 
@@ -194,18 +196,21 @@ void Simulatore::leggi_memorizza_autostrada(const std::string &file_path)
 
     if (varchi.size() < 2)
     {
-        throw std::runtime_error("Numero minimo di varchi non rispettato");
+        // MODIFICATO: Violazione invariante minima del dominio
+        throw std::logic_error("Numero minimo di varchi non rispettato");
     }
 
     // --- CORREZIONI LOGICHE CRITICHE ---
     if (varchi[0] - 1 < svincoli[0])
     {
-        throw std::runtime_error("struttura autostrada non rispettata (V < S+1)");
+        // MODIFICATO: Errore logico strutturale
+        throw std::logic_error("struttura autostrada non rispettata (V < S+1)");
     }
     // Correzione: uso .back() come valore, non come indice
     if (varchi.back() + 1 > svincoli.back())
     {
-        throw std::runtime_error("struttura autostrada non rispettata (V > S-1)");
+        // MODIFICATO: Errore logico strutturale
+        throw std::logic_error("struttura autostrada non rispettata (V > S-1)");
     }
 
     for (const auto &v : varchi)
@@ -214,7 +219,8 @@ void Simulatore::leggi_memorizza_autostrada(const std::string &file_path)
         {
             if (std::abs(v - s) <= 1.0)
             {
-                throw std::runtime_error("struttura autostrada non rispettata (sovrapposizione)");
+                // MODIFICATO: Errore logico strutturale
+                throw std::logic_error("struttura autostrada non rispettata (sovrapposizione)");
             }
         }
     }
