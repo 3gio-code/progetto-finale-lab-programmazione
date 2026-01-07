@@ -2,7 +2,6 @@
 #define TUTOR_H
 
 #include <string>
-#include <vector>
 #include <map>
 #include <fstream>
 
