@@ -28,7 +28,8 @@ struct CheckpointVeicolo {
 struct StatisticheVarco {
     int veicoli_transitati = 0;   // Contatore totale passaggi
     double somma_velocita = 0.0;  // Somma velocità (per calcolare la media)
-    int numero_multe = 0;         // Numero di veicoli sanzionati in questa tratta
+    int numero_multe = 0;    // Numero di veicoli sanzionati in questa tratta
+    int cont_veicoli_validi = 0;   //Conta solo i veicoli che hanno una velocità valida
     
     // Nota: La velocità media del varco N si riferisce alla tratta (N-1 -> N)
 };

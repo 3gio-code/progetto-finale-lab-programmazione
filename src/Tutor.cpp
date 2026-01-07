@@ -273,6 +273,9 @@ void Tutor::elabora_passaggio(const std::string &targa, int id_varco, double ist
             // Aggiorna statistiche velocità media varco
             dati_statistici[id_varco].somma_velocita += vel_media;
 
+            //Solo ora abbiamo contato una velocità vera, quindi la contiamo
+            dati_statistici[id_varco].cont_veicoli_validi++;
+
             // CONTROLLO MULTA
             if (vel_media > 130.0)
             {
@@ -318,13 +321,10 @@ void Tutor::stats()
         // la media sarà corretta solo se dividiamo per (veicoli_transitati - ingressi_nuovi).
         // Tuttavia, il testo chiede solo "velocità media".
 
-        if (dati.somma_velocita > 0)
+        //Usa conteggio delle velocità valide invece di veicoli transitati
+        if(dati.cont_veicoli_validi > 0)
         {
-            // Questo è approssimativo: non sappiamo esattamente quanti hanno contribuito alla somma
-            // (tutti quelli che avevano un varco precedente).
-            // Assumiamo che per i varchi > 1, quasi tutti abbiano un precedente.
-            media_vel = dati.somma_velocita / dati.veicoli_transitati;
-            // Nota: al varco 1 media_vel sarà 0.
+            media_vel = dati.somma_velocita / dati.cont_veicoli_validi;
         }
 
         std::cout << "Varco " << id << " (" << mappa_varchi[id] << " Km):" << std::endl;
@@ -333,7 +333,7 @@ void Tutor::stats()
                   << (dati.veicoli_transitati / minuti_trascorsi) << " veicoli/min" << std::endl;
 
         if (id > 1)
-        { // Ha senso parlare di velocità media solo dal secondo varco in poi
+        { // Ha senso parlare di velocità media solo dal secondo varco in poi dati i files di input
             std::cout << "  - Velocita' media rilevata: " << media_vel << " km/h" << std::endl;
             std::cout << "  - Sanzioni emesse: " << dati.numero_multe << std::endl;
         }
