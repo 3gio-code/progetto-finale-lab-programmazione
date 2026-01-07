@@ -1,62 +1,66 @@
-CMakeLists.txt.user
-CMakeCache.txt
-CMakeFiles
-CMakeScripts
-Testing
-Makefile
-cmake_install.cmake
-install_manifest.txt
-compile_commands.json
-CTestTestfile.cmake
-_deps
-CMakeUserPresets.json
-# Prerequisites
-*.d
-*.vscode
-.vscode
+# --- Build System (CMake) ---
+# Ignora la cartella di build (standard)
+build/
+build_*/
+bin/
+lib/
 
-# Compiled Object files
-*.slo
-*.lo
+# File generati da CMake nella root (se capita di compilare fuori dalla cartella build)
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.cmake
+!CMakeLists.txt
+
+# --- C++ Compiled Files ---
+# Oggetti e binari
 *.o
 *.obj
-.out
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Linker files
-*.ilk
-
-# Debugger Files
-*.pdb
-
-# Compiled Dynamic libraries
+*.exe
+*.dll
 *.so
 *.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
 *.a
 *.lib
-
-# Executables
-*.exe
 *.out
 *.app
 
-# debug information files
-*.dwo
-# CLion
-#  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
-#  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
-#  and can be added to the global gitignore or merged into this file.  For a more nuclear
-#  option (not recommended) you can uncomment the following to ignore the entire idea folder.
-#cmake-build-*
+# --- IDE & Editor (VS Code) ---
+.vscode/
+# Se vuoi versionare le configurazioni di run/debug ma non i percorsi locali,
+# commenta la riga sopra (.vscode/) e scommenta le seguenti:
+# .vscode/*
+# !.vscode/tasks.json
+# !.vscode/launch.json
+# !.vscode/extensions.json
+# .vscode/ipch/
+
+# Altri editor comuni
+.idea/
+*.swp
+*.swo
+*~
+
+# --- OS Specifics ---
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+.directory
+
+# --- Progetto Specifico (Dati Generati) ---
+# Ignora i file di output generati dal simulatore e dal tutor
+data/Runs.txt
+data/Passages.txt
+
+# Assicura che i file di input siano invece tracciati
+!data/Highway.txt
