@@ -40,50 +40,46 @@ Tutor::~Tutor()
 // GESTIONE FILE E CARICAMENTO
 // ============================================================================
 
-void Tutor::carica_autostrada(const std::string &file_path)
-{
+void Tutor::carica_autostrada(const std::string& file_path) {
     std::ifstream file(file_path);
-    if (!file.is_open())
-    {
-        throw std::runtime_error("Impossibile aprire file autostrada: " + file_path);
+    if (!file.is_open()) {
+        throw std::runtime_error("Impossibile leggere file autostrada: " + file_path);
     }
 
-    std::vector<double> varchi_temp;
     std::string riga;
+    int id_progressivo = 1;
 
-    // Legge il file riga per riga
-    while (std::getline(file, riga))
-    {
-        if (riga.empty())
-            continue;
+    while (std::getline(file, riga)) {
+        // Se la riga è vuota o commentata, saltala
+        if (riga.empty()) continue;
+
+        // TRUCCO: Sostituisco tutte le < e > con spazi vuoti.
+        // Esempio: "<100.0> <V>" diventa " 100.0   V "
+        std::replace(riga.begin(), riga.end(), '<', ' ');
+        std::replace(riga.begin(), riga.end(), '>', ' ');
 
         std::stringstream ss(riga);
-        double km;
-        char tipo; // V o S
+        double km = -1.0;
+        char tipo = ' ';
 
-        // Formato atteso: "10.5 V" oppure "10.5 S"
-        if (ss >> km >> tipo)
-        {
-            if (tipo == 'V')
-            {
-                varchi_temp.push_back(km);
+        // Provo a leggere: prima il numero (km), poi il carattere (tipo)
+        if (ss >> km >> tipo) {
+            // Se ho letto con successo e il tipo è 'V' (Varco)
+            if (tipo == 'V') {
+                mappa_varchi[id_progressivo] = km;
+                
+                // Inizializzo le statistiche
+                dati_statistici[id_progressivo] = StatisticheVarco();
+                
+                id_progressivo++;
             }
         }
     }
     file.close();
 
-    // Ordina i varchi per distanza crescente (specifica punto 24)
-    std::sort(varchi_temp.begin(), varchi_temp.end());
-
-    if (varchi_temp.size() < 2)
-    {
-        throw std::runtime_error("Configurazione non valida: servono almeno 2 varchi.");
-    }
-
-    // Assegna ID progressivi (1, 2, 3...)
-    for (size_t i{0}; i < varchi_temp.size(); ++i)
-    {
-        mappa_varchi[static_cast<int>(i + 1)] = varchi_temp[i];
+    // Controllo finale richiesto dalle specifiche
+    if (mappa_varchi.size() < 2) {
+        throw std::runtime_error("Configurazione non valida: servono almeno 2 varchi (trovati: " + std::to_string(mappa_varchi.size()) + ").");
     }
 }
 
