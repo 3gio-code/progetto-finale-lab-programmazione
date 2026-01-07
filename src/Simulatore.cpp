@@ -90,13 +90,11 @@ void Simulatore::genera_percorsi()
 
 void Simulatore::scrivi()
 {
-    // Usa std::ios::trunc per sovrascrivere il file pulito a ogni avvio
     std::ofstream Runs("data/Runs.txt", std::ios::trunc);
-
     if (!Runs.is_open())
     {
-        std::cerr << "Errore: Impossibile scrivere su data/Runs.txt" << std::endl;
-        return;
+        // Lancia eccezione invece di stampare e basta
+        throw std::runtime_error("Errore di I/O: Impossibile scrivere su data/Runs.txt");
     }
 
     for (const auto &c : macchine)
@@ -130,12 +128,12 @@ void Simulatore::leggi_memorizza_autostrada(const std::string &file_path)
     }
 
     std::string riga;
-    std::string simboliValidi = "0123456789.SV<>";
+    std::string simboliValidi{"0123456789.SV<>"};
 
     while (getline(Highway, riga))
     {
-        std::string rigaPulita = "";
-        bool allow_insertion = false;
+        std::string rigaPulita{""};
+        bool allow_insertion{false};
 
         for (char c : riga)
         {
@@ -156,18 +154,24 @@ void Simulatore::leggi_memorizza_autostrada(const std::string &file_path)
                     break;
                 case 'S':
                 {
+                    if (!allow_insertion)
+                        throw std::runtime_error("Formattazione sbagliata per Svincolo");
+
                     if (!is_number(rigaPulita))
                         throw std::runtime_error("Formattazione non numerica per Svincolo");
-                    double numero = std::stod(rigaPulita);
+                    double numero{std::stod(rigaPulita)};
                     svincoli.push_back(numero);
                     rigaPulita = "";
                 }
                 break;
                 case 'V':
                 {
+                    if (!allow_insertion)
+                        throw std::runtime_error("Formattazione sbagliata per Svincolo");
+
                     if (!is_number(rigaPulita))
                         throw std::runtime_error("Formattazione non numerica per Varco");
-                    double numero = std::stod(rigaPulita);
+                    double numero{std::stod(rigaPulita)};
                     varchi.push_back(numero);
                     rigaPulita = "";
                 }
