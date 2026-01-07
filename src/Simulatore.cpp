@@ -1,7 +1,6 @@
 #include "Simulatore.h"
 #include <iostream>
 #include <fstream>
-#include <random>
 #include <stdexcept>
 #include <algorithm>
 #include <iomanip>
@@ -9,13 +8,6 @@
 #include <cmath>
 
 // Variabili globali per il random
-std::random_device rd;
-std::mt19937 mt(rd());
-std::uniform_int_distribution<> vel_dist(vel_min, vel_max);
-std::uniform_int_distribution<> char_dist(1, 26);
-std::uniform_int_distribution<> num_dist(0, 9);
-std::uniform_int_distribution<> tempo_dist(tempo_min, tempo_max);
-std::uniform_real_distribution<> ritardo_dist(rit_gen_min, rit_gen_max);
 
 // --- OPERATOR OVERLOAD (Spostato PRIMA di scrivi per visibilità) ---
 template <typename T, typename Y>
@@ -245,7 +237,7 @@ bool Simulatore::is_number(const std::string &s) const
     return true;
 }
 
-std::string Simulatore::genera_targa() const
+std::string Simulatore::genera_targa()
 {
     std::string targa;
     targa += static_cast<char>(char_dist(mt) + 'A' - 1);

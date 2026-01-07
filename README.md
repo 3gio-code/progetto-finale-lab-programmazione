@@ -2,3 +2,4 @@
 
 da fare:
 potrebbero generarsi due targe uguali, va sistemato
+gestire eccezioni
