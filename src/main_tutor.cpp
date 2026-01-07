@@ -1,6 +1,5 @@
 #include "Tutor.h"
 #include <iostream>
-#include <string>
 //nel caso si trovi qualcosa nel buffer di ingresso
 #include <limits> 
 

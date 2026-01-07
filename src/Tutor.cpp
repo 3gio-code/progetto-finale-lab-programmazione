@@ -230,7 +230,7 @@ void Tutor::set_time(const std::string &input_tempo)
 
     // Aggiorniamo il tempo del sistema
     tempo_corrente = target_time;
-    std::cout << "------------------------------------------------------------" << std::endl;
+    std::cout << std::endl << std::endl;
 }
 
 // ============================================================================
@@ -297,7 +297,7 @@ void Tutor::elabora_passaggio(const std::string &targa, int id_varco, double ist
 
 void Tutor::stats() 
 {
-    std::cout << "\n=== STATISTICHE SISTEMA (T = " << tempo_corrente << "s) ===" << std::endl;
+    std::cout << std::endl << "== STATISTICHE SISTEMA (T = " << tempo_corrente << "s) ===" << std::endl;
 
     // Calcoliamo minuti trascorsi (evitando divisione per 0)
     double minuti_trascorsi = (tempo_corrente > 0) ? (tempo_corrente / 60.0) : 1.0;
