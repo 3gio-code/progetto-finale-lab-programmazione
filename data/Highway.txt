@@ -3,6 +3,7 @@
 * S=Svincolo (Citta), V=Varco Tutor
 
 <0.0> <S>
+<5.0> <V>
 <35.0> <V>
 <56.0> <S>
 <110.0> <S>
