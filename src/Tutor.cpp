@@ -21,7 +21,7 @@ Tutor::Tutor(const std::string &file_autostrada, const std::string &file_passagg
     stream_passaggi.open(path_passaggi);
     if (!stream_passaggi.is_open())
     {
-        throw std::runtime_error("Errore: Impossibile aprire il file passaggi " + path_passaggi);
+        throw std::runtime_error("Errore: impossibile aprire il file passaggi " + path_passaggi);
     }
 
     std::cout << "Sistema Tutor inizializzato correttamente." << std::endl;
@@ -133,7 +133,7 @@ double Tutor::parse_input_tempo(const std::string &input) const
     }
     catch (const std::out_of_range& e)
     {
-        std::cerr << "Errore: Il numero inserito e' fuori scala. Uso 0." << std::endl;
+        std::cerr << "Errore: il numero inserito e' fuori scala. Uso 0." << std::endl;
         return 0.0;
     }
     catch (const std::exception& e)
@@ -162,7 +162,7 @@ void Tutor::set_time(const std::string &input_tempo)
     double target_time = tempo_corrente + incremento;
 
     std::cout << "Analisi traffico da " << std::fixed << std::setprecision(1)
-              << tempo_corrente << "s a " << target_time << "s..." << std::endl << std::endl;
+              << tempo_corrente << "s a " << target_time << "s." << std::endl << std::endl;
 
     std::string riga;
     std::streampos posizione_precedente;
@@ -205,8 +205,6 @@ void Tutor::set_time(const std::string &input_tempo)
                 break;
             }
 
-            // --- NUOVO CODICE (Più semplice ed efficiente) ---
-
         // 1. Leggiamo l'ID direttamente come intero
         int id_varco = std::stoi(s_varco); 
 
@@ -218,7 +216,7 @@ void Tutor::set_time(const std::string &input_tempo)
     }
     else 
     {
-       std::cerr << "Attenzione: Trovato ID Varco inesistente: " << id_varco << std::endl;
+       std::cerr << "Attenzione: trovato ID Varco inesistente: " << id_varco << std::endl;
     }
 
             if (id_varco != -1)
@@ -329,7 +327,7 @@ void Tutor::stats()
 
         std::cout << "Varco " << id << " (" << mappa_varchi[id] << " Km):" << std::endl;
         std::cout << "  - Veicoli transitati: " << dati.veicoli_transitati << std::endl;
-        std::cout << "  - Rateo: " << std::fixed << std::setprecision(2)
+        std::cout << "  - Flusso: " << std::fixed << std::setprecision(2)
                   << (dati.veicoli_transitati / minuti_trascorsi) << " veicoli/min" << std::endl;
 
         if (id > 1)

@@ -22,7 +22,7 @@ int main() {
         bool running = true;
 
         std::cout << std::endl << "Comandi disponibili:" << std::endl
-                  << "  set_time <val>  : Avanza simulazione (aggiungere m se si intende avanzare di minuti e non secondi)" << std::endl
+                  << "  set_time tempo : Avanza simulazione (aggiungere m se si intende avanzare di minuti e non secondi)" << std::endl
                   << "  stats           : Visualizza statistiche varchi" << std::endl
                   << "  reset           : Riavvia il sistema" << std::endl
                   << "  exit            : Chiude il programma" << std::endl;
