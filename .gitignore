@@ -13,6 +13,7 @@ CMakeUserPresets.json
 # Prerequisites
 *.d
 *.vscode
+.vscode
 
 # Compiled Object files
 *.slo
