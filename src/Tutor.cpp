@@ -284,7 +284,7 @@ void Tutor::elabora_passaggio(const std::string &targa, int id_varco, double ist
     flotta[targa] = nuovo_check;
 }
 
-void Tutor::stats()
+void Tutor::stats() 
 {
     std::cout << "\n=== STATISTICHE SISTEMA (T = " << tempo_corrente << "s) ===" << std::endl;
 

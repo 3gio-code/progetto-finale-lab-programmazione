@@ -62,6 +62,13 @@ public:
      * Gestisce input in secondi ("20") o minuti ("20m").
      * input_tempo Stringa contenente il tempo (es. "120" o "10m").
      */
+
+    // Vieta la copia (Costruttore di copia)
+    Tutor(const Tutor&) = delete;
+   
+    // Vieta l'assegnamento (Operatore di assegnamento)
+    Tutor& operator=(const Tutor&) = delete; 
+    
     void set_time(const std::string& input_tempo);
 
     /**
@@ -71,7 +78,8 @@ public:
      * - Velocità media
      * - Multe emesse
      */
-    void stats();
+    void stats() ;
+
 
     /**
      * Esegue il comando "reset".
