@@ -110,27 +110,39 @@ double Tutor::parse_input_tempo(const std::string &input) const
     if (input.empty())
         return 0.0;
 
-    std::string temp = input;
-    bool is_minutes = false;
+    std::string temp {input}; // Inizializzazione con graffe (copia)
+    bool is_minutes {false};  // Inizializzazione con graffe
 
     if (temp.back() == 'm')
     {
         is_minutes = true;
-        temp.pop_back(); // Rimuove la 'm'
+        temp.pop_back();
     }
 
     try
     {
-        double val = std::stod(temp);
+        // Uso delle graffe anche qui per coerenza
+        double val { std::stod(temp) }; 
+
         if (is_minutes)
         {
             return val * 60.0;
         }
         return val;
     }
-    catch (...)
+    catch (const std::invalid_argument& e)
     {
-        std::cerr << "Errore nel formato del tempo. Uso 0." << std::endl;
+        std::cerr << "Errore: '" << input << "' non e' un numero valido. Uso 0." << std::endl;
+        return 0.0;
+    }
+    catch (const std::out_of_range& e)
+    {
+        std::cerr << "Errore: Il numero inserito e' fuori scala. Uso 0." << std::endl;
+        return 0.0;
+    }
+    catch (const std::exception& e)
+    {
+        std::cerr << "Errore imprevisto durante la lettura del tempo: " << e.what() << std::endl;
         return 0.0;
     }
 }
@@ -154,8 +166,7 @@ void Tutor::set_time(const std::string &input_tempo)
     double target_time = tempo_corrente + incremento;
 
     std::cout << "Analisi traffico da " << std::fixed << std::setprecision(1)
-              << tempo_corrente << "s a " << target_time << "s..." << std::endl;
-    std::cout << "------------------------------------------------------------" << std::endl;
+              << tempo_corrente << "s a " << target_time << "s..." << std::endl << std::endl;
 
     std::string riga;
     std::streampos posizione_precedente;
