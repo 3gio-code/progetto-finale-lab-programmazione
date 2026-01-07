@@ -32,7 +32,20 @@ add_executable(tutor
     src/Tutor.cpp
 )
 
-# --- GESTIONE CARTELLA DATA (Opzionale ma consigliato) ---
-# Copia la cartella 'data' nella directory di build per far funzionare i path relativi
-# quando esegui il programma dalla cartella di build.
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+# --- GESTIONE CARTELLA DATA (SYMLINK) ---
+# Se siamo su sistemi Unix (Mac/Linux), creiamo un collegamento simbolico.
+# Così le modifiche in build/data si riflettono sui file originali.
+if(UNIX)
+    # Rimuove eventuali copie vecchie per evitare conflitti
+    file(REMOVE_RECURSE ${CMAKE_CURRENT_BINARY_DIR}/data)
+    
+    # Crea il symlink: build/data -> src/data
+    execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink 
+        "${CMAKE_CURRENT_SOURCE_DIR}/data" 
+        "${CMAKE_CURRENT_BINARY_DIR}/data"
+    )
+else()
+    # Su Windows i symlink richiedono privilegi Admin, quindi manteniamo la copia.
+    # Se sei su Windows, usa la Soluzione 1 per vedere i file aggiornati.
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+endif()
