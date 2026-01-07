@@ -209,17 +209,21 @@ void Tutor::set_time(const std::string &input_tempo)
                 break;
             }
 
-            // Mappiamo il KM all'ID del Varco
-            int id_varco = -1;
-            // Cerchiamo nella mappa quale ID corrisponde a questo KM (con tolleranza double)
-            for (const auto &[id, km] : mappa_varchi)
-            {
-                if (std::abs(km - km_varco) < 0.001)
-                {
-                    id_varco = id;
-                    break;
-                }
-            }
+            // --- NUOVO CODICE (Più semplice ed efficiente) ---
+
+        // 1. Leggiamo l'ID direttamente come intero
+        int id_varco = std::stoi(s_varco); 
+
+       // 2. Controlliamo se questo ID esiste nella nostra mappa
+       if (mappa_varchi.find(id_varco) != mappa_varchi.end())
+    {
+      // Se esiste, procediamo
+      elabora_passaggio(targa, id_varco, istante_passaggio);
+    }
+    else 
+    {
+       std::cerr << "Attenzione: Trovato ID Varco inesistente: " << id_varco << std::endl;
+    }
 
             if (id_varco != -1)
             {
