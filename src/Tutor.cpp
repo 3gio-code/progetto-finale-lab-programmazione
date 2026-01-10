@@ -50,6 +50,7 @@ void Tutor::carica_autostrada(const std::string& file_path) {
         if (riga.empty()) continue;
 
         // Sostituisco tutte le < e > con spazi vuoti.
+        //C++ ignora gli spazi vuoti quando vengono letti numeri (facilito la lettura)
         std::replace(riga.begin(), riga.end(), '<', ' ');
         std::replace(riga.begin(), riga.end(), '>', ' ');
 
@@ -222,8 +223,6 @@ void Tutor::set_time(const std::string &input_tempo)
     tempo_corrente = target_time;
     std::cout << std::endl << std::endl;
 }
-
-//ALTRE FUNZIONI
 
 void Tutor::elabora_passaggio(const std::string &targa, int id_varco, double istante)
 {
