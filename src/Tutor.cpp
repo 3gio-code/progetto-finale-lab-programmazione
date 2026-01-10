@@ -7,9 +7,7 @@
 #include <stdexcept>
 #include <vector>
 
-// ============================================================================
-// COSTRUTTORE E DISTRUTTORE
-// ============================================================================
+//costruttore della classe Tutor
 
 Tutor::Tutor(const std::string &file_autostrada, const std::string &file_passaggi)
     : path_passaggi(file_passaggi), tempo_corrente(0.0)
@@ -27,6 +25,8 @@ Tutor::Tutor(const std::string &file_autostrada, const std::string &file_passagg
     std::cout << "Sistema Tutor inizializzato correttamente." << std::endl;
     std::cout << "Varchi rilevati: " << mappa_varchi.size() << std::endl;
 }
+
+//distruttore della classe Tutor
 
 Tutor::~Tutor()
 {
