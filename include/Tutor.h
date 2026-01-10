@@ -1,51 +1,40 @@
 #ifndef TUTOR_H
 #define TUTOR_H
-
 #include <string>
 #include <map>
 #include <fstream>
 
-
-// ============================================================================
-// STRUTTURE DATI DI SUPPORTO
-// ============================================================================
-
 /**
- * Rappresenta lo stato di un veicolo "in viaggio".
- * Quando un veicolo passa sotto un varco, memorizziamo qui i dati.
- * Ci serve per confrontarli con il passaggio al varco successivo.
- * Utilizzato come valore nella mappa 'flotta_in_transito'.
+ * Struct per rappresentare un veicolo in viaggio.
+ * Quando un veicolo passa sotto un varco, memorizziamo qui i dati:
+ * id varco(che verrà collegato alla sua distanza) e tempo in secondi.
  */
 struct CheckpointVeicolo {
-    int id_varco;       // ID numerico del varco (1, 2, 3...)
-    double tempo;       // Istante del passaggio in secondi dall'inizio simulazione
+    int id_varco;       
+    double tempo;       
 };
 
 /**
- * Contenitore per le statistiche di un singolo varco.
- * Serve per rispondere al comando 'stats' richiesto dal progetto.
+ * Struct per le statistiche di un singolo varco.
+ * Vengono memorizzati i seguenti dati corrispettivi ad ogni varco:
+ * veicoli totali transitati, somma totale delle velocità,
+ * numeri totale di veicoli sanzionati, veicoli con velocitè valida 
+ * (questi ultimi due dati verranno utilizzati per calcolare la velocità media dal varco N-1 a N).
  */
 struct StatisticheVarco {
-    int veicoli_transitati = 0;   // Contatore totale passaggi
-    double somma_velocita = 0.0;  // Somma velocità (per calcolare la media)
-    int numero_multe = 0;    // Numero di veicoli sanzionati in questa tratta
-    int cont_veicoli_validi = 0;   //Conta solo i veicoli che hanno una velocità valida
-    
-    // Nota: La velocità media del varco N si riferisce alla tratta (N-1 -> N)
+    int veicoli_transitati = 0;   
+    double somma_velocita = 0.0;  
+    int numero_multe = 0;    
+    int cont_veicoli_validi = 0;   
 };
 
-// ============================================================================
-// CLASSE PRINCIPALE
-// ============================================================================
-
+//inizio della classe principale Tutor
 class Tutor {
 public:
     /**
      * Costruttore del sistema Tutor.
      * Inizializza il sistema, carica la mappa dell'autostrada e apre il file dei passaggi.
-     * file_autostrada Percorso al file 'Highway.txt' (es. "../Data/Highway.txt")
-     * file_passaggi Percorso al file 'Passages.txt' (es. "../Data/Passages.txt")
-     * lancia std::runtime_error Se non riesce ad aprire i file.
+     * lancia std::runtime_error se non riesce ad aprire i file.
      */
     Tutor(const std::string& file_autostrada, const std::string& file_passaggi);
 
@@ -55,21 +44,21 @@ public:
      */
     ~Tutor();
 
-    // --- INTERFACCIA UTENTE (Comandi richiesti) ---
-
-    /**
-     * Esegue il comando "set_time"
-     * * Legge i passaggi dal file fino al nuovo istante temporale.
-     * Gestisce input in secondi ("20") o minuti ("20m").
-     * input_tempo Stringa contenente il tempo (es. "120" o "10m").
-     */
-
     // Vieta la copia (Costruttore di copia)
     Tutor(const Tutor&) = delete;
    
     // Vieta l'assegnamento (Operatore di assegnamento)
     Tutor& operator=(const Tutor&) = delete; 
-    
+
+    // Comandi richiesti da Tutor
+
+    /**
+     * Gestisce il comando "set_time"
+     * Legge i passaggi dal file fino al nuovo istante temporale.
+     * Gestisce input in secondi ("20") o minuti ("20m").
+     * input_tempo Stringa contenente il tempo (es. "120" o "10m").
+     */
+
     void set_time(const std::string& input_tempo);
 
     /**
@@ -92,64 +81,53 @@ public:
     void reset();
 
 private:
-    // ========================================================================
-    // DATI MEMBRO (LO STATO DEL SISTEMA)
-    // ========================================================================
 
-    // 1. Mappa dell'Autostrada (Statica)
-    // Associa l'ID sequenziale del varco (1, 2...) alla sua posizione in Km (10.5, 20.0...)
-    // Fondamentale per calcolare il Delta Spazio.
+    //Dati membro
+
+    // Mappa dell'Autostrada 
+    // Associa l'ID del varco alla sua posizione in Km 
+    // Fondamentale per calcolare il delta dpazio necessario nella velocità.
     std::map<int, double> mappa_varchi;
 
-    // 2. Flotta veicoli in transito (Dinamica)
-    // La chiave è la TARGA (stringa univoca).
-    // Il valore è l'ultimo CHECKPOINT (dove l'abbiamo vista l'ultima volta).
-    // Scelta struttura dati: std::map garantisce ricerca in O(log N).
-    // Essenziale per accoppiare Varco A -> Varco B.
+    // Flotta veicoli in transito 
+    // Il valore è l'ultimo CHECKPOINT (dove è passata l'ultima volta).
+    // Scelta struttura dati: std::map garantisce ricerca in O(log N) con chiave la targa(univoca).
     std::map<std::string, CheckpointVeicolo> flotta;
 
-    // 3. Statistiche (Accumulatori)
+    // Statistiche (Accumulatori)
     // Chiave: ID Varco. Valore: Struct con i contatori.
     std::map<int, StatisticheVarco> dati_statistici;
 
-    // 4. Gestione File e Tempo
-    std::ifstream stream_passaggi; // Stream di lettura aperto su Passages.txt
-    std::string path_passaggi;     // Salviamo il percorso per poterlo riaprire al reset
-    double tempo_corrente;         // Orologio interno del sistema (in secondi)
+    // Gestione File e Tempo
+    std::ifstream stream_passaggi; 
+    std::string path_passaggi;     
+    double tempo_corrente;         
 
-    // ========================================================================
-    // METODI PRIVATI (LOGICA INTERNA)
-    // ========================================================================
+    //Metodi privati
 
     /**
-     * Carica la struttura statica da Highway.txt.
-     * *Legge il file riga per riga. Ignora gli svincoli (non servono al Tutor).
-     * Assegna ID progressivi (1, 2, 3...) ai varchi in ordine di apparizione
-     * e memorizza le loro distanze chilometriche.
+     * Carica la struttura statica da Highway.txt ignorando gli svincoli (non servono).
+     * Assegna ID progressivi ai varchi in ordine di apparizione e memorizza le loro distanze in km.
      */
     void carica_autostrada(const std::string& file_path);
 
-    /**
-     * Helper per convertire l'input utente in secondi.
-     * input Stringa come "100" o "5m".
-     * double Valore convertito in secondi (es. "5m" -> 300.0).
-     */
+    //Funzione helper per convertire l'input utente in secondi.
     double parse_input_tempo(const std::string& input) const;
 
     /**
-     * Core Business Logic: elabora un singolo transito.
+     * Viene implementata la logica dei controlli di velocità.
      * Viene chiamata per ogni riga letta da Passages.txt.
      * 1. Controlla se la targa è già in 'flotta'.
-     * 2. Se sì: calcola velocità media (Delta S / Delta T).
+     * 2. Se sì: calcola velocità media.
      * 3. Se > 130 km/h: stampa multa.
      * 4. Aggiorna la posizione del veicolo o lo inserisce se nuovo.
      */
     void elabora_passaggio(const std::string& targa, int id_varco, double istante);
 
-    /**
-     * Pulisce le stringhe lette dal file (rimuove < e >).
-     */
+    
+    //Pulisce le stringhe lette dal file (rimuove < e >).
+
     std::string pulisci_token(const std::string& token);
 };
 
-#endif // TUTOR_H
+#endif 
