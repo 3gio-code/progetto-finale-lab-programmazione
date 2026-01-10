@@ -7,7 +7,7 @@
 #include <stdexcept>
 #include <vector>
 
-//costruttore della classe Tutor
+//COSTRUTTORE E DISTRUTTORE 
 
 Tutor::Tutor(const std::string &file_autostrada, const std::string &file_passaggi)
     : path_passaggi(file_passaggi), tempo_corrente(0.0)
@@ -26,8 +26,6 @@ Tutor::Tutor(const std::string &file_autostrada, const std::string &file_passagg
     std::cout << "Varchi rilevati: " << mappa_varchi.size() << std::endl;
 }
 
-//distruttore della classe Tutor
-
 Tutor::~Tutor()
 {
     if (stream_passaggi.is_open())
@@ -36,9 +34,7 @@ Tutor::~Tutor()
     }
 }
 
-// ============================================================================
-// GESTIONE FILE E CARICAMENTO
-// ============================================================================
+//FUNZIONI CARICAMENTO FILE
 
 void Tutor::carica_autostrada(const std::string& file_path) {
     std::ifstream file(file_path);
@@ -53,8 +49,7 @@ void Tutor::carica_autostrada(const std::string& file_path) {
         // Se la riga è vuota o commentata, saltala
         if (riga.empty()) continue;
 
-        // TRUCCO: Sostituisco tutte le < e > con spazi vuoti.
-        // Esempio: "<100.0> <V>" diventa " 100.0   V "
+        // Sostituisco tutte le < e > con spazi vuoti.
         std::replace(riga.begin(), riga.end(), '<', ' ');
         std::replace(riga.begin(), riga.end(), '>', ' ');
 
@@ -97,17 +92,15 @@ std::string Tutor::pulisci_token(const std::string &token)
     return pulita;
 }
 
-// ============================================================================
-// INTERFACCIA UTENTE
-// ============================================================================
+//Comandi di Tutor
 
 double Tutor::parse_input_tempo(const std::string &input) const
 {
     if (input.empty())
         return 0.0;
 
-    std::string temp {input}; // Inizializzazione con graffe (copia)
-    bool is_minutes {false};  // Inizializzazione con graffe
+    std::string temp {input}; 
+    bool is_minutes {false};  
 
     if (temp.back() == 'm')
     {
@@ -117,7 +110,6 @@ double Tutor::parse_input_tempo(const std::string &input) const
 
     try
     {
-        // Uso delle graffe anche qui per coerenza
         double val { std::stod(temp) }; 
 
         if (is_minutes)
@@ -189,14 +181,14 @@ void Tutor::set_time(const std::string &input_tempo)
         {
 
             // Pulisce i dati
-            std::string s_varco = pulisci_token(token_varco); // Es: "10.5"
-            std::string targa = pulisci_token(token_targa);   // Es: "AA123BB"
-            std::string s_tempo = pulisci_token(token_tempo); // Es: "125.5"
+            std::string s_varco = pulisci_token(token_varco); 
+            std::string targa = pulisci_token(token_targa);  
+            std::string s_tempo = pulisci_token(token_tempo); 
 
             double km_varco = std::stod(s_varco);
             double istante_passaggio = std::stod(s_tempo);
 
-            // CONTROLLO TEMPORALE
+            // controllo temporale
             if (istante_passaggio > target_time)
             {
                 // Il passaggio è nel futuro rispetto al target_time.
@@ -231,9 +223,7 @@ void Tutor::set_time(const std::string &input_tempo)
     std::cout << std::endl << std::endl;
 }
 
-// ============================================================================
-// CORE LOGIC
-// ============================================================================
+//ALTRE FUNZIONI
 
 void Tutor::elabora_passaggio(const std::string &targa, int id_varco, double istante)
 {
