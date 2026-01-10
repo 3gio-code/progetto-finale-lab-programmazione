@@ -9,7 +9,7 @@ int main() {
     const std::string file_autostrada = "data/Highway.txt";
     const std::string file_passaggi = "data/Passages.txt";
 
-    std::cout << "SISTEMA TUTOR AUTOSTRADALE Faggin_Birtele_DallMura" << std::endl;
+    std::cout << "SISTEMA TUTOR AUTOSTRADALE Faggin_Birtele_DallaMura" << std::endl;
 
     try {
         
@@ -22,10 +22,10 @@ int main() {
         bool running = true;
 
         std::cout << std::endl << "Comandi disponibili:" << std::endl
-                  << "  set_time tempo : Avanza simulazione (aggiungere m se si intende avanzare di minuti e non secondi)" << std::endl
-                  << "  stats           : Visualizza statistiche varchi" << std::endl
-                  << "  reset           : Riavvia il sistema" << std::endl
-                  << "  exit            : Chiude il programma" << std::endl;
+                  << "  set_time tempo : avanza simulazione (aggiungere m se si intende avanzare di minuti e non secondi)" << std::endl
+                  << "  stats           : visualizza statistiche varchi" << std::endl
+                  << "  reset           : riavvia il sistema" << std::endl
+                  << "  exit            : chiude il programma" << std::endl;
 
         // ciclo while di interazione con l'utente
         while (running) {
